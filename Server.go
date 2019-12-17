@@ -9,13 +9,13 @@ import (
 
 const (
 	protocol string = "tcp"
-	host     string = "127.0.0.1"
-	port     string = "81"
+	// host     string = "127.0.0.1"
+	port     string = ":81"
 )
 
 func main() {
 	// boot up the tcp server
-	listener, err := net.Listen(protocol, host+":"+port)
+	listener, err := net.Listen(protocol, port)
 	if err != nil {
 		log.Fatal("tcp server failiure: ", err)
 	}
