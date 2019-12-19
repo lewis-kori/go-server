@@ -36,8 +36,8 @@ func main() {
 
 func handleConnection(conn net.Conn) {
 	// read buffer from client after connection is established
-	bufferBytes, err := bufio.NewReader(conn).ReadBytes('\n')
-
+	message, err:= bufio.NewReader(conn).ReadString('\n')
+	
 	if err != nil {
 		log.Println("Connection broken by client..")
 		conn.Close()
@@ -46,15 +46,15 @@ func handleConnection(conn net.Conn) {
 	}
 
 	// convert the buffer bytes to string data type
-	message := string(bufferBytes)
+	
 
 	// get client's IP address
 	clientAddress := conn.RemoteAddr().String()
 	response := fmt.Sprintf(message + "from " + clientAddress + "\n")
 
 	// check key word to allow data in that connection to processed
-	// example data you might receive from a sensor maybe KEYWORD,(18,29,435,457,2016-02-05,):
-	if strings.Contains(message, "KEYWORD") {
+	// example data you might receive from a sensor maybe PITJET,(18,29,435,457,2016-02-05,):
+	if strings.Contains(message, "PITJET") {
 		important := message[7 : len(message)-1]
 		result := strings.SplitAfter(important, ",")
 		first := strings.Replace(result[0], "(", "", -1)
@@ -73,9 +73,9 @@ func handleConnection(conn net.Conn) {
 			log.Fatalln(err)
 		}
 		// make a http post request to your endpoint
-		enpoint_url := "http://httpbin.org/post"
+		enpointURL := "http://httpbin.org/post"
 
-		resp, err := http.Post(enpoint_url, "application/json", bytes.NewReader(requestBody))
+		resp, err := http.Post(enpointURL, "application/json", bytes.NewReader(requestBody))
 		//  error handling
 		if err != nil {
 			log.Fatalln(err)
