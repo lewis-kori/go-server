@@ -36,25 +36,25 @@ func main() {
 
 func handleConnection(conn net.Conn) {
 	// read buffer from client after connection is established
-	message, err:= bufio.NewReader(conn).ReadString('\n')
-	
+	bufferBytes, err := bufio.NewReader(conn).ReadBytes('\n')
+
 	if err != nil {
-		log.Println("Connection broken by client..")
+		log.Println("Connection broken by client, ", err)
 		conn.Close()
 		// escape recursion
 		return
 	}
 
 	// convert the buffer bytes to string data type
-	
+	message := string(bufferBytes)
 
 	// get client's IP address
 	clientAddress := conn.RemoteAddr().String()
 	response := fmt.Sprintf(message + "from " + clientAddress + "\n")
 
 	// check key word to allow data in that connection to processed
-	// example data you might receive from a sensor maybe PITJET,(18,29,435,457,2016-02-05,):
-	if strings.Contains(message, "PITJET") {
+	// example data you might receive from a sensor maybe KEYWORD,(18,29,435,457,2016-02-05,):
+	if strings.Contains(message, "KEYWORD") {
 		important := message[7 : len(message)-1]
 		result := strings.SplitAfter(important, ",")
 		first := strings.Replace(result[0], "(", "", -1)
