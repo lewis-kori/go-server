@@ -75,7 +75,7 @@ func handleConnection(conn net.Conn) {
 			log.Fatalln(err)
 		}
 		// make a http post request to your endpoint
-		enpointURL := "http://b55431d0.ngrok.io"
+		enpointURL := "http://b55431d0.ngrok.io/api/v1/data-stream/"
 
 		resp, err := http.Post(enpointURL, "application/json", bytes.NewReader(requestBody))
 		//  error handling
