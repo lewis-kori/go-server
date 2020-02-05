@@ -53,27 +53,29 @@ func handleConnection(conn net.Conn) {
 	response := fmt.Sprintf(message + "from " + clientAddress + "\n")
 
 	// check key word to allow data in that connection to processed
-	// example data you might receive from a sensor maybe KEYWORD,(18,29,435,457,2016-02-05,):
+	// example data you might receive from a sensor maybe KEYWORD,(1,1,1,1,2016-02-05,):
 	if strings.Contains(message, "KEYWORD") {
 		important := message[7 : len(message)-1]
 		result := strings.SplitAfter(important, ",")
-		first := strings.Replace(result[0], "(", "", -1)
-		user := strings.Replace(first, ",", "", -1)
-		location := strings.Replace(result[1], ",", "", -1)
+		// first := strings.Replace(result[0], "(", "", -1)
+		user := strings.Replace(result[3], ",", "", -1)
+		location := strings.Replace(result[3], ",", "", -1)
 		finger := strings.Replace(result[2], ",", "", -1)
-		building := strings.Replace(result[3], ",", "", -1)
+		device := strings.Replace(result[3], ",", "", -1)
+		action := strings.Replace(result[3], ",", "", -1)
 		requestBody, err := json.Marshal(map[string]string{
-			"user":     user,
-			"finger":   finger,
-			"building": building,
-			"location": location,
+			"guard":        user,
+			"guard_finger": finger,
+			"location":     location,
+			"device":       device,
+			"action":       action,
 		})
 
 		if err != nil {
 			log.Fatalln(err)
 		}
 		// make a http post request to your endpoint
-		enpointURL := "http://httpbin.org/post"
+		enpointURL := "http://0a58d63a.ngrok.io/api/v1/data-stream/"
 
 		resp, err := http.Post(enpointURL, "application/json", bytes.NewReader(requestBody))
 		//  error handling
@@ -99,3 +101,5 @@ func handleConnection(conn net.Conn) {
 	// recursive func to handle io.EOF for random disconnects
 	handleConnection(conn)
 }
+
+// http://0a58d63a.ngrok.io/api/v1/data-stream/
