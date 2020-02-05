@@ -54,7 +54,7 @@ func handleConnection(conn net.Conn) {
 
 	// check key word to allow data in that connection to processed
 	// example data you might receive from a sensor maybe KEYWORD,(1,1,1,1,2016-02-05,):
-	if strings.Contains(message, "KEYWORD") {
+	if strings.Contains(message, "PITJET") {
 		important := message[7 : len(message)-1]
 		result := strings.SplitAfter(important, ",")
 		// first := strings.Replace(result[0], "(", "", -1)
@@ -75,7 +75,7 @@ func handleConnection(conn net.Conn) {
 			log.Fatalln(err)
 		}
 		// make a http post request to your endpoint
-		enpointURL := "http://0a58d63a.ngrok.io/api/v1/data-stream/"
+		enpointURL := "http://b55431d0.ngrok.io"
 
 		resp, err := http.Post(enpointURL, "application/json", bytes.NewReader(requestBody))
 		//  error handling
