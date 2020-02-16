@@ -53,29 +53,32 @@ func handleConnection(conn net.Conn) {
 	response := fmt.Sprintf(message + "from " + clientAddress + "\n")
 
 	// check key word to allow data in that connection to processed
-	// example data you might receive from a sensor maybe KEYWORD,(1,1,1,1,2016-02-05,):
+	// example data you might receive from a sensor maybe KEYWORD,255,7,,10,0,0,2016-02-05 02:59:20 ,:
 	if strings.Contains(message, "PITJET") {
 		important := message[7 : len(message)-1]
 		result := strings.SplitAfter(important, ",")
-		// first := strings.Replace(result[0], "(", "", -1)
-		user := strings.Replace(result[3], ",", "", -1)
-		location := strings.Replace(result[3], ",", "", -1)
-		finger := strings.Replace(result[2], ",", "", -1)
-		device := strings.Replace(result[3], ",", "", -1)
+		device := strings.Replace(result[0], ",", "", -1)
+		finger := strings.Replace(result[1], ",", "", -1)
+		tag := strings.Replace(result[2], ",", "", -1)
 		action := strings.Replace(result[3], ",", "", -1)
+		flag1 := strings.Replace(result[4], ",", "", -1)
+		flag2 := strings.Replace(result[5], ",", "", -1)
+		datetime := strings.Replace(result[6], ",", "", -1)
 		requestBody, err := json.Marshal(map[string]string{
-			"guard":        user,
-			"guard_finger": finger,
-			"location":     location,
 			"device":       device,
+			"guard_finger": finger,
+			"tag":          tag,
+			"flag_one":     flag1,
+			"flag_two":     flag2,
 			"action":       action,
+			"datetime":     datetime,
 		})
 
 		if err != nil {
 			log.Fatalln(err)
 		}
 		// make a http post request to your endpoint
-		enpointURL := "http://b55431d0.ngrok.io/api/v1/data-stream/"
+		enpointURL := "http://httpbin.org/post"
 
 		resp, err := http.Post(enpointURL, "application/json", bytes.NewReader(requestBody))
 		//  error handling
