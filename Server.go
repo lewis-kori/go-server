@@ -10,6 +10,7 @@ import (
 	"net"
 	"net/http"
 	"strings"
+	"strconv"
 )
 
 const (
@@ -51,10 +52,10 @@ func handleConnection(conn net.Conn) {
 	 type Data struct {
 	    action int64  `json:"ref"`
 	    device int64  `json:"ref"`
-	    guard_finger int64  `json:"ref"`
+	    guard_finger int  `json:"ref"`
 	    tag int64  `json:"ref"`
-	    flag_one int64  `json:"ref"`
-	    flag_two int64  `json:"ref"`
+	    flag_one int  `json:"ref"`
+	    flag_two int  `json:"ref"`
 	    arrived_at string
   	}
 
@@ -75,9 +76,17 @@ func handleConnection(conn net.Conn) {
 		flag2 := strings.Replace(result[5], ",", "", -1)
 		datetime := strings.Replace(result[6], ",", "", -1)
 		
+		device, err := strconv.Atoi(device)
+		finger, err := strconv.Atoi(finger)
+		tag, err := strconv.Atoi(tag)
+		action := strconv.Atoi(action)
+		flag1, err := strconv.Atoi(flag1)
+		flag2, err := strconv.Atoi(flag2)
+		datetime, err := strconv.Atoi(datetime)
+		
 		data := Data{
 			device: device,
-			guard_finger: finger
+			guard_finger: finger,
 			flag_one: flag1,
 			flag_two: flag2,
 			tag: tag,
