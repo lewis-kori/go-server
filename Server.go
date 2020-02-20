@@ -47,6 +47,16 @@ func handleConnection(conn net.Conn) {
 
 	// convert the buffer bytes to string data type
 	message := string(bufferBytes)
+	
+	 type Data struct {
+	    action int64  `json:"ref"`
+	    device int64  `json:"ref"`
+	    guard_finger int64  `json:"ref"`
+	    tag int64  `json:"ref"`
+	    flag_one int64  `json:"ref"`
+	    flag_two int64  `json:"ref"`
+	    arrived_at string
+  	}
 
 	// get client's IP address
 	clientAddress := conn.RemoteAddr().String()
@@ -64,15 +74,19 @@ func handleConnection(conn net.Conn) {
 		flag1 := strings.Replace(result[4], ",", "", -1)
 		flag2 := strings.Replace(result[5], ",", "", -1)
 		datetime := strings.Replace(result[6], ",", "", -1)
-		requestBody, err := json.Marshal(map[string]string{
-			"device":       device,
-			"guard_finger": finger,
-			"tag":          tag,
-			"flag_one":     flag1,
-			"flag_two":     flag2,
-			"action":       action,
-			"datetime":     datetime,
-		})
+		
+		data := Data{
+			device: device,
+			guard_finger: finger
+			flag_one: flag1,
+			flag_two: flag2,
+			tag: tag,
+			action: action,
+			arrived_at: datetime,
+		}
+		
+		var requestBody []byte
+		requestBody, err := json.Marshal(data)
 
 		if err != nil {
 			log.Fatalln(err)
